@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+content="with=device-width,
+initial-scale=1.0">
+    <title>SKYION GAMEVILLE</
+title>
+</head>
+<body>
+    <h1>SKYION GAMEVILLE</h1>
+    <h2>where competition
+meets innovation</h2>
+
+     <p>welcome to the future
+of gaming in Kenya !</P>
+
+    <h3>Our Vision</h3>
+    <p>Bringing esports,
+physical sports, and virtual
+reality together.</p>
+
+    <h3>Our Mission</h3>
+    <p>Creating opportunities
+for gamers and athletes to
+compete, connect, and grow.</
+p>
+</body>
+</html>
