@@ -1,15 +1,85 @@
-SKYION GAMEVILLE
-Enter the game zone. Pick a challenge, test your skills, and have fun!
-
-🎮 OUR GAMES
-Choose a game and let the fun begin!
-
-🐍 Snake
-Collect food and grow your snake. Avoid the walls and yourself.
-
-Play Snake
-⚡ Quick Tap
-Tap the button as many times as you can in 10 seconds.
-
-Play Quick Tap
-© SKYION GAMEVILLE · Game on!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKYION GAMEVILLE</title>
+<style>
+:root{--bg:#071326;--panel:#102542;--cyan:#22e6f2;--text:#f4fbff;--muted:#b7c8d8}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#12345b,#050b18 65%);color:var(--text)}
+header{text-align:center;padding:54px 18px 30px}
+h1{font-size:clamp(2rem,7vw,4rem);margin:0;color:var(--cyan);letter-spacing:3px;text-shadow:0 0 18px #00d9ff66}
+header p{color:var(--muted);max-width:650px;margin:14px auto}
+main{max-width:1000px;margin:auto;padding:20px}
+section{background:#0b1b30cc;border:1px solid #1c4568;border-radius:18px;padding:24px;margin:20px 0}
+h2{color:var(--cyan);text-align:center}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid #245277;border-radius:14px;padding:20px;text-align:center}
+button{background:var(--cyan);color:#04111e;border:0;border-radius:10px;padding:12px 18px;font-weight:bold;cursor:pointer;font-size:1rem}
+button:hover{filter:brightness(1.1)}
+.game-area{display:none;text-align:center}
+canvas{background:#06101d;border:2px solid var(--cyan);border-radius:10px;max-width:100%;touch-action:none}
+#status{color:var(--muted);min-height:24px}
+.controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px}
+footer{text-align:center;color:var(--muted);padding:28px}
+</style>
+</head>
+<body>
+<header>
+<h1>SKYION GAMEVILLE</h1>
+<p>Enter the game zone. Pick a challenge, test your skills, and have fun!</p>
+</header>
+<main>
+<section>
+<h2>🎮 OUR GAMES</h2>
+<p style="text-align:center;color:var(--muted)">Choose a game and let the fun begin!</p>
+<div class="games" id="gameMenu">
+<div class="card"><h3>🐍 Snake</h3><p>Collect food and grow your snake. Avoid the walls and yourself.</p><button id="startSnake">Play Snake</button></div>
+<div class="card"><h3>⚡ Quick Tap</h3><p>Tap the button as many times as you can in 10 seconds.</p><button id="startTap">Play Quick Tap</button></div>
+</div>
+</section>
+<section class="game-area" id="snakeArea">
+<h2>🐍 Snake Game</h2><p id="snakeStatus">Use arrow keys or the buttons to move.</p>
+<canvas id="board" width="360" height="360" aria-label="Snake game board"></canvas>
+<div class="controls">
+<button data-dir="up">↑</button>
+<button data-dir="left">←</button>
+<button data-dir="down">↓</button>
+<button data-dir="right">→</button>
+</div>
+<div class="controls"><button id="restartSnake">Restart</button><button id="backSnake">Back to games</button></div>
+</section>
+<section class="game-area" id="tapArea">
+<h2>⚡ Quick Tap</h2><p id="tapStatus">Press Start, then tap as fast as you can for 10 seconds.</p>
+<h3 id="tapScore">Score: 0</h3>
+<button id="tapStart">Start round</button>
+<button id="tapButton" disabled> TAP! </button>
+<div class="controls"><button id="backTap">Back to games</button></div>
+</section>
+</main>
+<footer>© SKYION GAMEVILLE · Game on!</footer>
+<script>
+const menu=document.getElementById('gameMenu'), snakeArea=document.getElementById('snakeArea'),tapArea=document.getElementById('tapArea');
+function show(area){menu.parentElement.querySelector('p').style.display='none';menu.style.display='none';snakeArea.style.display=area==='snake'?'block':'none';tapArea.style.display=area==='tap'?'block':'none';}
+function back(){menu.parentElement.querySelector('p').style.display='block';menu.style.display='grid';snakeArea.style.display='none';tapArea.style.display='none';stopSnake();}
+document.getElementById('startSnake').onclick=()=>{show('snake');resetSnake();};
+document.getElementById('startTap').onclick=()=>{show('tap');};
+document.getElementById('backSnake').onclick=back;document.getElementById('backTap').onclick=back;
+const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),cell=18;
+let snake,food,dir,nextDir,timer,score;
+function placeFood(){food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};if(snake.some(p=>p.x===food.x&&p.y===food.y))placeFood();}
+function resetSnake(){stopSnake();snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];dir={x:1,y:0};nextDir=dir;score=0;placeFood();document.getElementById('snakeStatus').textContent='Score: 0 · Use arrows or buttons.';draw();timer=setInterval(tick,130);}
+function stopSnake(){if(timer)clearInterval(timer);timer=null;}
+function draw(){ctx.fillStyle='#06101d';ctx.fillRect(0,0,360,360);ctx.fillStyle='#ffca55';ctx.fillRect(food.x*cell,food.y*cell,cell-2,cell-2);snake.forEach((p,i)=>{ctx.fillStyle=i?'#16a9b8':'#22e6f2';ctx.fillRect(p.x*cell,p.y*cell,cell-2,cell-2);});}
+function tick(){dir=nextDir;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=20||head.y>=20||snake.some(p=>p.x===head.x&&p.y===head.y)){stopSnake();document.getElementById('snakeStatus').textContent='Game over! Score: '+score+'. Press Restart to play again.';return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score++;document.getElementById('snakeStatus').textContent='Score: '+score;placeFood();}else snake.pop();draw();}
+function setDir(d){const dirs={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};const n=dirs[d];if(n&&!(n.x===-dir.x&&n.y===-dir.y))nextDir=n;}
+document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>setDir(b.dataset.dir));
+document.addEventListener('keydown',e=>{const map={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'};if(map[e.key]&&snakeArea.style.display==='block'){e.preventDefault();setDir(map[e.key]);}});
+document.getElementById('restartSnake').onclick=resetSnake;
+let tapCount=0,tapTimer=null;
+document.getElementById('tapStart').onclick=()=>{clearInterval(tapTimer);tapCount=0;document.getElementById('tapScore').textContent='Score: 0';document.getElementById('tapStatus').textContent='Go!';document.getElementById('tapButton').disabled=false;document.getElementById('tapStart').disabled=true;tapTimer=setTimeout(()=>{document.getElementById('tapButton').disabled=true;document.getElementById('tapStart').disabled=false;document.getElementById('tapStatus').textContent='Time up! Your score is '+tapCount+'.';},10000);};
+document.getElementById('tapButton').onclick=()=>{tapCount++;document.getElementById('tapScore').textContent='Score: '+tapCount;};
+</script>
+</body>
+</html>
